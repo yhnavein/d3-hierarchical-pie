@@ -7,7 +7,7 @@ var HierarchicalPie = function(options) {
     height          : 250,
     chartId         : null,
     data            : null,
-    legendContainer : '#cat-legend',
+    legendContainer : '#pie-chart-legend',
     navigation      : '.chart-navigator'
   };
   $.extend(config, config, options || {});
@@ -108,7 +108,6 @@ var HierarchicalPie = function(options) {
         .enter()
           .append("li")
           .html(function(d, i) {
-            console.log('i = ' + i);
             return d.category + '<span class="divider">/</span>';
           });
   }
@@ -146,7 +145,7 @@ var HierarchicalPie = function(options) {
 
     var percentage = (((d.endAngle - d.startAngle) / (2 * Math.PI)) * 100).toFixed(1);
     self.percentLabel.text(percentage + '%');
-    self.costLabel.text(d.data.cost + ' zł');
+    self.costLabel.text('$' + d.data.cost);
     self.focusGroup.transition().attr('opacity', 1);
     hovered.transition().ease("easeInOutQuart").duration(100).attr("d", self.arcOver);
 
@@ -170,7 +169,7 @@ var HierarchicalPie = function(options) {
       .on('click', self.pieClick)
       .transition().ease("elastic").duration(1000).attrTween("d", self.tweenPie);
 
-    //self.tabulateCategories(data);
+    self.tabulateCategories(data);
   };
 
   self.init();
