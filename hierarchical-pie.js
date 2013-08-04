@@ -3,7 +3,8 @@ var HierarchicalPie = function(options) {
   var self = this;
 
   var config = {
-    holder          : null,
+    width          : 400,
+    height          : 250,
     chartId         : null,
     data            : null,
     legendContainer : '#cat-legend',
@@ -39,8 +40,8 @@ var HierarchicalPie = function(options) {
   };
 
   // chart width
-  self.width  = config.holder.width();
-  self.height = config.holder.height();
+  self.width  = config.width;
+  self.height = config.height;
   // pie radius
   self.radius = Math.min(self.width, self.height) / 2;
   self.inLevel = 1;
@@ -169,7 +170,7 @@ var HierarchicalPie = function(options) {
       .on('click', self.pieClick)
       .transition().ease("elastic").duration(1000).attrTween("d", self.tweenPie);
 
-    self.tabulateCategories(data);
+    //self.tabulateCategories(data);
   };
 
   self.init();

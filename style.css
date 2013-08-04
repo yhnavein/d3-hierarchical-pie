@@ -1,0 +1,20 @@
+.hierarchical-pie .arc-cost {
+  fill: #555;
+  font-size: 13px;
+  text-anchor: middle;
+}
+.hierarchical-pie .arc-title {
+  fill: #222;
+  font-size: 20px;
+  text-shadow: 0 0 2px rgba(0,0,0,.75);
+}
+.hierarchical-pie .arc-percent {
+  font-size: 28px;
+  fill: #333;
+  text-anchor: middle;
+}
+
+.hierarchical-pie g.cake .arc path {
+  cursor: pointer;
+}
+.hierarchical-pie g.cake .arc path.pie-leaf { cursor: auto; }
