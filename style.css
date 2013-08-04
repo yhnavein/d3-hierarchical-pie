@@ -1,0 +1,48 @@
+.hierarchical-pie .arc-cost {
+  fill: #555;
+  font-size: 13px;
+  text-anchor: middle;
+}
+.hierarchical-pie .arc-title {
+  fill: #222;
+  font-size: 20px;
+  text-shadow: 0 0 2px rgba(0,0,0,.75);
+}
+.hierarchical-pie .arc-percent {
+  font-size: 28px;
+  fill: #333;
+  text-anchor: middle;
+}
+
+.hierarchical-pie g.cake .arc path {
+  cursor: pointer;
+}
+.hierarchical-pie g.cake .arc path.pie-leaf { cursor: auto; }
+
+.chart-navigator {
+  display: none;
+}
+.chart-navigator #pie-navigator { float: left; }
+.chart-navigator .breadcrumb {
+  margin: 0 0 0 60px;
+  background: transparent;
+  padding: 4px 10px;
+}
+.table-legend .cat-color {
+  width: 10px;
+  height: 10px;
+  display: block;
+  margin: 4px 0 3px;
+  border: 1px solid rgba(50,50,50,.8);
+  box-shadow: 0 0 4px rgba(0,0,0,.25);
+  border-radius: 2px;
+}
+.table-legend td.cost {
+  white-space: nowrap;
+}
+.table-legend td.color-cell {
+  padding: 4px 2px;
+}
+.table-legend td.hovered {
+  background: #ededed;
+}
