@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>d3 - Hierarchical Pie</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="It's a d3 sample pie chart for interacting with hierarchical data in nice and easy way for user. It's great for showing categories structure.">
+    <meta name="author" content="Piotrek Dąbrowski (yhnavein)">
+
+    <!-- Le styles -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <link href="vendor/font-awesome/css/font-awesome-ie7.min.css" rel="stylesheet">
+    <![endif]-->
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 60px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }
+    </style>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="vendor/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <link rel="shortcut icon" href="vendor/ico/favicon.png">
+  </head>
+
+  <body>
+
+    <div class="container-narrow">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="usage.html">Usage</a></li>
+          <li><a href="https://github.com/yhnavein/d3-hierarchical-pie"><i class="icon-github icon-large"></i></a></li>
+        </ul>
+        <h3 class="muted">d3 - Hierarchical Pie</h3>
+      </div>
+
+      <hr>
+
+      <div class="jumbotron">
+        <h1>Hierarchical Pie</h1>
+        <p class="lead">
+          This is a pie chart prepared especially for presenting hierarchical category structure and is dedicated for non-technical people.
+          So it's simple, colorful and easy to use.
+        </p>
+        <a class="btn btn-large btn-success" href="https://github.com/yhnavein/d3-hierarchical-pie/archive/master.zip">
+          Download
+          <i class="icon-download-alt"></i>
+        </a>
+        <a class="btn" href="https://github.com/yhnavein/d3-hierarchical-pie">
+          GitHub
+          <i class="icon-github"></i>
+        </a>
+      </div>
+
+      <hr>
+
+      <div class="marketing">
+        <legend>Live Demo</legend>
+        <div class="chart-navigator clearfix">
+            <div class="btn-group" id="pie-navigator">
+                <a href="#" class="btn btn-small" id="btnRoot" title="Go back to root" rel="tooltip"><i class="icon-double-angle-left"></i></a>
+                <a href="#" class="btn btn-small" id="btnLevelUp" title="Go up one level" rel="tooltip"><i class="icon-angle-left"></i></a>
+            </div>
+            <ul class="breadcrumb"></ul>
+        </div>
+        <div class="row-fluid">
+          <div class="span6">
+            <div id="hierarchical-pie-demo" class="hierarchical-pie"></div>
+          </div>
+          <div class="span6">
+            <div id="pie-chart-legend">
+                <table class="table table-condensed table-legend">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Category</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <script id="rowTemplate" type="text/template">
+                    <td class="color-cell">
+                        <span class="cat-color" style="background: {{color}};"></span>
+                    </td>
+                    <td>
+                    {{#isDirect}}
+                        <span title="Directly in this category" rel="tooltip"><i class="icon-info"></i></span>
+                    {{/isDirect}}
+                    {{category}}
+                    </td>
+                    <td class="cost">$ {{cost}}</td>
+                </script>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="footer">
+        <p>&copy; <a href="http://blog.puredev.eu">PureDev</a> 2013</p>
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="vendor/jquery-1.10.2.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="vendor/d3.min.js"></script>
+    <script src="vendor/mustache.js"></script>
+    <script src="hierarchical-pie.js"></script>
+
+    <script type="text/javascript">
+      $(function() {
+        var holder = $('#hierarchical-pie-demo');
+        holder.empty();
+
+        $.getJSON('sample-data.json', function(data) {
+          new HierarchicalPie({
+            chartId : '#hierarchical-pie-demo',
+            data : data
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
