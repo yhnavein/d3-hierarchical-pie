@@ -3,12 +3,12 @@ var HierarchicalPie = function(options) {
   var self = this;
 
   var config = {
-    width          : 400,
+    width           : 400,
     height          : 250,
     chartId         : null,
     data            : null,
-    legendContainer : '#pie-chart-legend',
-    navigation      : '.chart-navigator'
+    legendContainer : null,
+    navigation      : null
   };
   $.extend(config, config, options || {});
 
@@ -137,7 +137,7 @@ var HierarchicalPie = function(options) {
     self.focusGroup.transition().attr('opacity', 0);
     hovered.transition().ease("easeInOutQuart").duration(100).attr("d", self.arc);
 
-    d3.select('.legend-row-' + d.data.id_category).selectAll('td').classed("hovered", false);
+    d3.select(config.legendContainer).select('.legend-row-' + d.data.id_category).selectAll('td').classed("hovered", false);
   };
 
   this.pieMouseOver = function (d, i) {
@@ -149,7 +149,7 @@ var HierarchicalPie = function(options) {
     self.focusGroup.transition().attr('opacity', 1);
     hovered.transition().ease("easeInOutQuart").duration(100).attr("d", self.arcOver);
 
-    d3.select('.legend-row-' + d.data.id_category).selectAll('td').classed("hovered", true);
+    d3.select(config.legendContainer).select('.legend-row-' + d.data.id_category).selectAll('td').classed("hovered", true);
   };
 
   this.renderCake = function(data) {
