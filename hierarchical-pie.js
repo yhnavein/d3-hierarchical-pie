@@ -3,12 +3,21 @@ var HierarchicalPie = function(options) {
   var self = this;
 
   var config = {
-    width           : 400,
-    height          : 250,
-    chartId         : null,
-    data            : null,
-    legendContainer : null,
-    navigation      : null
+    width             : 400,
+    height            : 250,
+    chartId           : null,
+    data              : null,
+    legendContainer   : null,
+    hoverRadiusDiff   : 10,
+    navigation        : null,
+    hoverPieAnimation : {
+      easing   : "elastic",
+      duration : 1000
+    },
+    focusAnimation : {
+      easing   : "easeInOutQuart",
+      duration : 100
+    }
   };
   $.extend(config, config, options || {});
 
@@ -54,9 +63,9 @@ var HierarchicalPie = function(options) {
     self.color = function(id) {
       return id === null ? '#ddd' : self.palette(id);
     };
-    self.arc          = d3.svg.arc().outerRadius(self.radius - 10).innerRadius((self.radius + 10) / 2);
-    self.arcOver      = d3.svg.arc().outerRadius(self.radius).innerRadius((self.radius + 10) / 2);
-    self.pie          = d3.layout.pie().sort(null).value(function(d) { return parseFloat(d.cost); });
+    self.arc     = d3.svg.arc().outerRadius(self.radius - config.hoverRadius).innerRadius(self.radius / 2);
+    self.arcOver = d3.svg.arc().outerRadius(self.radius).innerRadius(self.radius / 2);
+    self.pie     = d3.layout.pie().sort(null).value(function(d) { return parseFloat(d.cost); });
 
     self.svg = d3.select(config.chartId).append("svg")
       .attr('id', 'chart').attr("width", self.width)
@@ -135,7 +144,7 @@ var HierarchicalPie = function(options) {
     var hovered = d3.select(this);
 
     self.focusGroup.transition().attr('opacity', 0);
-    hovered.transition().ease("easeInOutQuart").duration(100).attr("d", self.arc);
+    hovered.transition().ease(config.focusAnimation.easing).duration(config.focusAnimation.duration).attr("d", self.arc);
 
     d3.select(config.legendContainer).select('.legend-row-' + d.data.id_category).selectAll('td').classed("hovered", false);
   };
@@ -147,7 +156,7 @@ var HierarchicalPie = function(options) {
     self.percentLabel.text(percentage + '%');
     self.costLabel.text('$' + d.data.cost);
     self.focusGroup.transition().attr('opacity', 1);
-    hovered.transition().ease("easeInOutQuart").duration(100).attr("d", self.arcOver);
+    hovered.transition().ease(config.focusAnimation.easing).duration(config.focusAnimation.duration).attr("d", self.arcOver);
 
     d3.select(config.legendContainer).select('.legend-row-' + d.data.id_category).selectAll('td').classed("hovered", true);
   };
@@ -167,7 +176,8 @@ var HierarchicalPie = function(options) {
       .on('mouseover', self.pieMouseOver)
       .on('mouseout', self.pieMouseOut)
       .on('click', self.pieClick)
-      .transition().ease("elastic").duration(1000).attrTween("d", self.tweenPie);
+      .transition().ease(config.hoverPieAnimation.easing).duration(config.hoverPieAnimation.duration)
+      .attrTween("d", self.tweenPie);
 
     self.tabulateCategories(data);
   };
