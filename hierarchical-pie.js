@@ -10,6 +10,7 @@ var HierarchicalPie = function(options) {
     legendContainer   : null,
     hoverRadiusDiff   : 10,
     navigation        : null,
+    hideNavOnRoot     : true,
     dataSchema        : {
       idField       : 'id_category',
       valueField    : 'cost',
@@ -24,6 +25,7 @@ var HierarchicalPie = function(options) {
       duration : 100
     }
   };
+
   $.extend(config, config, options || {});
 
   this.tweenPie = function(b){
@@ -95,13 +97,18 @@ var HierarchicalPie = function(options) {
     self.navigation = $(config.navigation);
     self.navigation.find('#btnRoot').on('click', self.goToRoot);
     self.navigation.find('#btnLevelUp').on('click', self.goLevelUp);
+
+    if(!config.hideNavOnRoot)
+      self.navigation.show();
   };
 
   this.goToRoot = function() {
     self.inLevel = 1;
     self.dataChain.length = 0; //clear chain
     self.renderCake(config.data);
-    self.navigation.hide();
+
+    if(config.hideNavOnRoot)
+      self.navigation.hide();
 
     return false;
   };
@@ -114,7 +121,7 @@ var HierarchicalPie = function(options) {
     self.dataChain.splice(self.dataChain.length - 1, 1);
     var prev = self.dataChain[self.dataChain.length - 1];
     self.renderCake(prev[config.dataSchema.childrenField]);
-    if(self.inLevel == 1)
+    if(self.inLevel === 1 && config.hideNavOnRoot)
       self.navigation.hide();
 
     return false;
