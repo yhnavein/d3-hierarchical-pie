@@ -3,13 +3,29 @@ var HierarchicalPie = function(options) {
   var self = this;
 
   var config = {
-    width          : 400,
-    height          : 250,
-    chartId         : null,
-    data            : null,
-    legendContainer : '#pie-chart-legend',
-    navigation      : '.chart-navigator'
+    width             : 400,
+    height            : 250,
+    chartId           : null,
+    data              : null,
+    legendContainer   : null,
+    hoverRadiusDiff   : 10,
+    navigation        : null,
+    hideNavOnRoot     : true,
+    dataSchema        : {
+      idField       : 'id_category',
+      valueField    : 'cost',
+      childrenField : 'categories'
+    },
+    hoverPieAnimation : {
+      easing   : "elastic",
+      duration : 1000
+    },
+    focusAnimation : {
+      easing   : "easeInOutQuart",
+      duration : 100
+    }
   };
+
   $.extend(config, config, options || {});
 
   this.tweenPie = function(b){
@@ -28,11 +44,11 @@ var HierarchicalPie = function(options) {
         .data(data)
         .enter()
           .append("tr")
-          .attr('data_id', function(d) { return d.id_category; })
-          .attr('class', function(d) { return 'legend-row-' + d.id_category; })
+          .attr('data_id', function(d) { return d[config.dataSchema.idField]; })
+          .attr('class', function(d) { return 'legend-row-' + d[config.dataSchema.idField]; })
           .html(function(d) {
-            d.color = self.color(d.id_category);
-            d.isDirect = d.id_category == null;
+            d.color = self.color(d[config.dataSchema.idField]);
+            d.isDirect = d[config.dataSchema.idField] == null;
             return rowTemplate(d);
           });
 
@@ -54,9 +70,15 @@ var HierarchicalPie = function(options) {
     self.color = function(id) {
       return id === null ? '#ddd' : self.palette(id);
     };
-    self.arc          = d3.svg.arc().outerRadius(self.radius - 10).innerRadius((self.radius + 10) / 2);
-    self.arcOver      = d3.svg.arc().outerRadius(self.radius).innerRadius((self.radius + 10) / 2);
-    self.pie          = d3.layout.pie().sort(null).value(function(d) { return parseFloat(d.cost); });
+    self.arc     = d3.svg.arc().outerRadius(self.radius - config.hoverRadiusDiff).innerRadius(self.radius / 2);
+    self.arcOver = d3.svg.arc().outerRadius(self.radius).innerRadius(self.radius / 2);
+    self.pie     = d3.layout.pie().sort(null).value(function(d) {
+      var val = d[config.dataSchema.valueField];
+      if(typeof val === 'string')
+        return parseFloat(val);
+
+      return val;
+    });
 
     self.svg = d3.select(config.chartId).append("svg")
       .attr('id', 'chart').attr("width", self.width)
@@ -75,13 +97,18 @@ var HierarchicalPie = function(options) {
     self.navigation = $(config.navigation);
     self.navigation.find('#btnRoot').on('click', self.goToRoot);
     self.navigation.find('#btnLevelUp').on('click', self.goLevelUp);
+
+    if(!config.hideNavOnRoot)
+      self.navigation.show();
   };
 
   this.goToRoot = function() {
     self.inLevel = 1;
     self.dataChain.length = 0; //clear chain
     self.renderCake(config.data);
-    self.navigation.hide();
+
+    if(config.hideNavOnRoot)
+      self.navigation.hide();
 
     return false;
   };
@@ -93,8 +120,8 @@ var HierarchicalPie = function(options) {
     self.inLevel--;
     self.dataChain.splice(self.dataChain.length - 1, 1);
     var prev = self.dataChain[self.dataChain.length - 1];
-    self.renderCake(prev.categories);
-    if(self.inLevel == 1)
+    self.renderCake(prev[config.dataSchema.childrenField]);
+    if(self.inLevel === 1 && config.hideNavOnRoot)
       self.navigation.hide();
 
     return false;
@@ -104,17 +131,17 @@ var HierarchicalPie = function(options) {
     var breadcrumb = d3.select(config.navigation).select('.breadcrumb');
     breadcrumb.selectAll('li').remove();
     breadcrumb.selectAll('li')
-        .data(self.dataChain)
-        .enter()
-          .append("li")
-          .html(function(d, i) {
-            return d.category + '<span class="divider">/</span>';
-          });
+      .data(self.dataChain)
+      .enter()
+        .append("li")
+        .html(function(d, i) {
+          return d.category + '<span class="divider">/</span>';
+        });
   }
 
   this.pieClick = function (d, i) {
     var c = self.arc.centroid(d);
-    if(typeof d.data.categories === 'undefined')
+    if(typeof d.data[config.dataSchema.childrenField] === 'undefined')
       return false;
 
     //console.log(d.data);
@@ -124,7 +151,7 @@ var HierarchicalPie = function(options) {
     self.focusGroup.attr('opacity', 0);
     d3.select(this).attr("d", self.arc);
 
-    self.renderCake(d.data.categories);
+    self.renderCake(d.data[config.dataSchema.childrenField]);
     if(self.inLevel > 1)
       self.navigation.show();
 
@@ -135,9 +162,9 @@ var HierarchicalPie = function(options) {
     var hovered = d3.select(this);
 
     self.focusGroup.transition().attr('opacity', 0);
-    hovered.transition().ease("easeInOutQuart").duration(100).attr("d", self.arc);
+    hovered.transition().ease(config.focusAnimation.easing).duration(config.focusAnimation.duration).attr("d", self.arc);
 
-    d3.select('.legend-row-' + d.data.id_category).selectAll('td').classed("hovered", false);
+    d3.select(config.legendContainer).select('.legend-row-' + d.data[config.dataSchema.idField]).selectAll('td').classed("hovered", false);
   };
 
   this.pieMouseOver = function (d, i) {
@@ -145,11 +172,11 @@ var HierarchicalPie = function(options) {
 
     var percentage = (((d.endAngle - d.startAngle) / (2 * Math.PI)) * 100).toFixed(1);
     self.percentLabel.text(percentage + '%');
-    self.costLabel.text('$' + d.data.cost);
+    self.costLabel.text('$' + d.data[config.dataSchema.valueField]);
     self.focusGroup.transition().attr('opacity', 1);
-    hovered.transition().ease("easeInOutQuart").duration(100).attr("d", self.arcOver);
+    hovered.transition().ease(config.focusAnimation.easing).duration(config.focusAnimation.duration).attr("d", self.arcOver);
 
-    d3.select('.legend-row-' + d.data.id_category).selectAll('td').classed("hovered", true);
+    d3.select(config.legendContainer).select('.legend-row-' + d.data[config.dataSchema.idField]).selectAll('td').classed("hovered", true);
   };
 
   this.renderCake = function(data) {
@@ -161,13 +188,14 @@ var HierarchicalPie = function(options) {
         .attr("class", "arc");
 
     arcs.append("path").attr("d", self.arc)
-      .attr("fill", function(d) { return self.color(d.data.id_category); })
-      .attr("stroke", function(d) { return d3.rgb(self.color(d.data.id_category)).darker(); })
-      .attr('class', function(d) { return 'category-pie-' + d.data.id_category + (typeof d.data.categories === 'undefined' ? ' pie-leaf' : ''); })
+      .attr("fill", function(d) { return self.color(d.data[config.dataSchema.idField]); })
+      .attr("stroke", function(d) { return d3.rgb(self.color(d.data[config.dataSchema.idField])).darker(); })
+      .attr('class', function(d) { return 'category-pie-' + d.data[config.dataSchema.idField] + (typeof d.data[config.dataSchema.childrenField] === 'undefined' ? ' pie-leaf' : ''); })
       .on('mouseover', self.pieMouseOver)
       .on('mouseout', self.pieMouseOut)
       .on('click', self.pieClick)
-      .transition().ease("elastic").duration(1000).attrTween("d", self.tweenPie);
+      .transition().ease(config.hoverPieAnimation.easing).duration(config.hoverPieAnimation.duration)
+      .attrTween("d", self.tweenPie);
 
     self.tabulateCategories(data);
   };
