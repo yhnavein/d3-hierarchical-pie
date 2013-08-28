@@ -11,6 +11,7 @@
     <!-- Le styles -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="vendor/prettify/prettify.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
 
     <!--[if lt IE 9]>
@@ -95,35 +96,116 @@
             </div>
           </div>
         </div>
-        <br/>
-        <!-- Chart Two -->
-        <div class="chart-navigator clearfix" id="chart-navigator-2">
-            <div class="btn-group" id="pie-navigator">
-                <a href="#" class="btn btn-small" id="btnRoot" title="Go back to root" rel="tooltip"><i class="icon-double-angle-left"></i></a>
-                <a href="#" class="btn btn-small" id="btnLevelUp" title="Go up one level" rel="tooltip"><i class="icon-angle-left"></i></a>
-            </div>
-            <ul class="breadcrumb"></ul>
-        </div>
-        <div class="row-fluid">
-          <div class="span6">
-            <div id="hierarchical-pie-demo-2" class="hierarchical-pie"></div>
-          </div>
-          <div class="span6">
-            <div id="pie-chart-legend-2">
-                <table class="table table-condensed table-legend">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Category</th>
-                            <th>Cost</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-          </div>
-        </div>
 
+        <legend>Usage</legend>
+        <p>Below there is sample code just enough to get started with <b>Hierarchical Pie</b>:</p>
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#html" data-toggle="tab">Markup</a></li>
+          <li><a href="#json" data-toggle="tab">Sample Data</a></li>
+          <li><a href="#js" data-toggle="tab">JavaScript</a></li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="html">
+<pre class="prettyprint linenums">
+&lt;div class=&quot;chart-navigator clearfix&quot; id=&quot;chart-navigator-1&quot;&gt;
+    &lt;div class=&quot;btn-group&quot; id=&quot;pie-navigator&quot;&gt;
+        &lt;a href=&quot;#&quot; class=&quot;btn btn-small&quot; id=&quot;btnRoot&quot; title=&quot;Go back to root&quot; rel=&quot;tooltip&quot;&gt;&lt;i class=&quot;icon-double-angle-left&quot;&gt;&lt;/i&gt;&lt;/a&gt;
+        &lt;a href=&quot;#&quot; class=&quot;btn btn-small&quot; id=&quot;btnLevelUp&quot; title=&quot;Go up one level&quot; rel=&quot;tooltip&quot;&gt;&lt;i class=&quot;icon-angle-left&quot;&gt;&lt;/i&gt;&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;ul class=&quot;breadcrumb&quot;&gt;&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;row-fluid&quot;&gt;
+  &lt;div class=&quot;span6&quot;&gt;
+    &lt;div id=&quot;hierarchical-pie-demo&quot; class=&quot;hierarchical-pie&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;span6&quot;&gt;
+    &lt;div id=&quot;pie-chart-legend-1&quot;&gt;
+        &lt;table class=&quot;table table-condensed table-legend&quot;&gt;
+            &lt;thead&gt;
+                &lt;tr&gt;
+                    &lt;th&gt;&lt;/th&gt;
+                    &lt;th&gt;Category&lt;/th&gt;
+                    &lt;th&gt;Cost&lt;/th&gt;
+                &lt;/tr&gt;
+            &lt;/thead&gt;
+            &lt;tbody&gt;&lt;/tbody&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;script id=&quot;rowTemplate&quot; type=&quot;text/template&quot;&gt;
+    &lt;td class=&quot;color-cell&quot;&gt;
+        &lt;span class=&quot;cat-color&quot; style=&quot;background: {{color}};&quot;&gt;&lt;/span&gt;
+    &lt;/td&gt;
+    &lt;td&gt;
+    {{#isDirect}}
+        &lt;span title=&quot;Directly in this category&quot; rel=&quot;tooltip&quot;&gt;&lt;i class=&quot;icon-info&quot;&gt;&lt;/i&gt;&lt;/span&gt;
+    {{/isDirect}}
+    {{category}}
+    &lt;/td&gt;
+    &lt;td class=&quot;cost&quot;&gt;$ {{cost}}&lt;/td&gt;
+&lt;/script&gt;
+</pre>
+          </div>
+          <div class="tab-pane" id="json">
+<pre class="prettyprint linenums">
+[
+  {
+    "id_category":"26",
+    "category":"Cheeses",
+    "cost":"541.11",
+    "categories":[
+      {
+        "cost":"230.00",
+        "category":"European",
+        "id_category":"455"
+      },
+      {
+        "id_category":"33",
+        "category":"Australian",
+        "cost":"113.90"
+      }
+    ]
+  },
+  {
+    "id_category":"70",
+    "category":"Breads",
+    "cost":"540.99",
+    "categories":[
+      {
+        "id_category":"71",
+        "category":"Whole wheat",
+        "cost":"18.26",
+        "categories":[
+          {
+            "id_category":"49",
+            "category":"Graham bread",
+            "cost":"16.06"
+          }
+        ]
+      }
+    ]
+  }
+]
+</pre>
+          </div>
+          <div class="tab-pane" id="js">
+<pre class="prettyprint linenums">
+var holder = $('#hierarchical-pie-demo');
+holder.empty();
+
+$.getJSON('sample-data.json', function(data) {
+  new HierarchicalPie({
+    chartId : '#hierarchical-pie-demo',
+    data : data,
+    legendContainer : '#pie-chart-legend-1',
+    navigation      : '#chart-navigator-1'
+  });
+});
+</pre>
+          </div>
+        </div>
       </div>
 
       <hr>
@@ -141,6 +223,7 @@
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="vendor/d3.min.js"></script>
     <script src="vendor/mustache.js"></script>
+    <script src="vendor/prettify/prettify.js"></script>
     <script src="hierarchical-pie.js"></script>
 
     <script type="text/javascript">
@@ -157,22 +240,10 @@
             navigation      : '#chart-navigator-1'
           });
         });
+
+        window.prettyPrint && prettyPrint();
       });
 
-      // Chart 2
-      $(function() {
-        var holder = $('#hierarchical-pie-demo-2');
-        holder.empty();
-
-        $.getJSON('sample-data.json', function(data) {
-          new HierarchicalPie({
-            chartId : '#hierarchical-pie-demo-2',
-            data : data,
-            legendContainer : '#pie-chart-legend-2',
-            navigation      : '#chart-navigator-2'
-          });
-        });
-      });
     </script>
   </body>
 </html>
