@@ -38,45 +38,71 @@
       <hr>
 
       <div class="marketing">
-        <legend>Live Demo</legend>
-        <!-- Chart One -->
-        <div class="chart-navigator clearfix" id="chart-navigator-1">
-            <div class="btn-group" id="pie-navigator">
-                <a href="#" class="btn btn-small" id="btnRoot" title="Go back to root" rel="tooltip"><i class="icon-double-angle-left"></i></a>
-                <a href="#" class="btn btn-small" id="btnLevelUp" title="Go up one level" rel="tooltip"><i class="icon-angle-left"></i></a>
-            </div>
-            <ul class="breadcrumb"></ul>
-        </div>
         <div class="row-fluid">
           <div class="span6">
-            <div id="hierarchical-pie-demo-1" class="hierarchical-pie"></div>
+            <legend>Requirements</legend>
+            <p>For actual use you will need those libraries:</p>
+            <ul>
+              <li><a href="http://jquery.com">jQuery</a></li>
+              <li><a href="https://github.com/janl/mustache.js">Mustache.js</a></li>
+              <li><a href="http://d3js.org/">d3.js</a></li>
+            </ul>
           </div>
           <div class="span6">
-            <div id="pie-chart-legend-1">
-                <table class="table table-condensed table-legend">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Category</th>
-                            <th>Cost</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <script id="rowTemplate" type="text/template">
-                    <td class="color-cell">
-                        <span class="cat-color" style="background: {{color}};"></span>
-                    </td>
-                    <td>
-                    {{#isDirect}}
-                        <span title="Directly in this category" rel="tooltip"><i class="icon-info"></i></span>
-                    {{/isDirect}}
-                    {{category}}
-                    </td>
-                    <td class="cost">$ {{cost}}</td>
-                </script>
-            </div>
+            <legend>Suggestions</legend>
+            <p>For simple usage without bothering with customizing code you will need those:</p>
+            <ul>
+              <li><a href="http://getbootstrap.com/2.3.2">Bootstrap v.2+</a></li>
+              <li><a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a></li>
+            </ul>
           </div>
+        </div>
+
+        <div>
+          <legend>Configuration</legend>
+
+<pre class="prettyprint linenums">
+var defaults = {
+  //quite obvious ones
+  width             : 400,
+  height            : 250,
+
+  //id of chart, for d3
+  chartId           : null,
+
+  //data to be presented
+  data              : null,
+
+  //css selector with legend
+  legendContainer   : null,
+
+  //difference between pie with and without hover mouse
+  hoverRadiusDiff   : 10,
+
+  //css selector with navigation panel
+  navigation        : null,
+
+  //determine if navigation panel should be hidden when showing root
+  hideNavOnRoot     : true,
+
+  //schema of provided data; allows to customize chart, not the data source
+  dataSchema        : {
+    idField       : 'id_category',
+    valueField    : 'cost',
+    childrenField : 'categories'
+  },
+
+  //customizing animations - easings and durations
+  hoverPieAnimation : {
+    easing   : "elastic",
+    duration : 1000
+  },
+  focusAnimation : {
+    easing   : "easeInOutQuart",
+    duration : 100
+  }
+};
+</pre>
         </div>
       </div>
 
@@ -101,18 +127,6 @@
     <script type="text/javascript">
       // Chart 1
       $(function() {
-        var holder = $('#hierarchical-pie-demo-1');
-        holder.empty();
-
-        $.getJSON('sample-data.json', function(data) {
-          new HierarchicalPie({
-            chartId : '#hierarchical-pie-demo-1',
-            data : data,
-            legendContainer : '#pie-chart-legend-1',
-            navigation      : '#chart-navigator-1'
-          });
-        });
-
         window.prettyPrint && prettyPrint();
       });
     </script>
